@@ -1,0 +1,220 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.container {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+h1 {
+  text-align: center;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #f0f4f7;
+}
+
+.nav-link.active {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  color: #555555;
+}
+
+/* Custom Select Wrapper */
+.custom-select-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+select {
+  appearance: none; /* Remove default arrow */
+  width: 100%;
+  padding: 10px 40px 10px 10px; /* Adjust padding for custom arrow */
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background-color: #ffffff;
+  font-size: 16px;
+  color: #333333;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+/* Change border color on focus */
+select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Custom Arrow */
+.custom-select-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333333;
+  transform: translateY(-50%);
+}
+
+/* Hover Effect */
+.custom-select-wrapper:hover select {
+  border-color: #4CAF50;
+}
+
+/* Optional: Add a subtle box shadow on focus */
+select:focus {
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+#response {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* Hide the response box when it's empty */
+#response:empty {
+  display: none;
+}
+
+/* Ensure the response box is visible when it has content */
+#response:not(:empty) {
+  display: block;
+}
+
+/* Image upload styles */
+input[type="file"] {
+  padding: 10px;
+  border: 2px dashed #cccccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="file"]:hover {
+  border-color: #4CAF50;
+  background-color: #f0f8f0;
+}
+
+.image-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#imageResponse {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+#imageResponse:empty {
+  display: none;
+}
+
+#imageResponse:not(:empty) {
+  display: block;
+}
+
+.feedback-section {
+  margin-bottom: 15px;
+}
+
+.feedback-section h4 {
+  color: #4CAF50;
+  margin-bottom: 8px;
+}
+
+.feedback-section ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.feedback-section li {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.feedback-section li:last-child {
+  border-bottom: none;
+}

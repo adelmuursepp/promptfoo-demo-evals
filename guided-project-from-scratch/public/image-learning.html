@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trilingo - Visual Learning</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Trilingo - Visual Learning</h1> 
+    
+    <nav class="navigation">
+      <a href="index.html" class="nav-link">Language Practice</a>
+      <a href="image-learning.html" class="nav-link active">Visual Learning</a>
+    </nav>
+
+    <div class="section">
+      <label for="targetLanguage">Target Language:</label>
+      <div class="custom-select-wrapper">
+        <select id="targetLanguage">
+          <option value="">Select a language</option>
+          <option value="Spanish">Spanish</option>
+          <option value="French">French</option>
+          <option value="German">German</option>
+          <option value="Estonian">Estonian</option>
+          <option value="English">English</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section">
+      <label for="imageUpload">Upload an image to learn vocabulary:</label>
+      <input type="file" id="imageUpload" accept="image/*" />
+      <div id="imagePreview" class="image-preview"></div>
+    </div>
+
+    <div class="section">
+      <label for="userDescription">Describe what you see in the target language:</label>
+      <textarea id="userDescription" rows="5" placeholder="Describe the image in your target language..."></textarea>
+    </div>
+
+    <button id="analyzeBtn">Analyze & Learn</button>
+
+    <div class="section" id="imageResponse"></div>
+  </div>
+
+  <script src="image-app.js"></script>
+</body>
+</html>

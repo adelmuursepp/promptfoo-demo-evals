@@ -13,40 +13,52 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        const configContent = `# Promptfoo Configuration
-# This config compares different LLMs on a customer service task
+        const configContent = `# Language Learning AI Evaluation
+# This config tests AI models for language learning applications
 
 providers:
-  - openai:gpt-4
-  - anthropic:claude-3-opus-20240229
+  - openai:gpt-4o-mini
+  - google:gemini-pro
   - openai:gpt-3.5-turbo
 
 prompts:
   - |
-    You are a helpful customer service agent for an online store.
+    You are a language teacher grading a student's answer.
     
-    Customer inquiry: {{inquiry}}
+    Language: {{language}}
+    Question: {{question}}
+    Student's answer: {{student_answer}}
+    Expected answer: {{expected_answer}}
     
-    Please provide a helpful and polite response.
+    Grade from 1-10 and identify specific mistakes.
+    Return JSON: {"mark": number, "mistakes": [string]}
 
 tests:
   - vars:
-      inquiry: "I received a damaged product. What should I do?"
+      language: "Spanish"
+      question: "How do you say 'Good morning'?"
+      student_answer: "Buenos días"
+      expected_answer: "Buenos días"
     assert:
-      - type: contains
-        value: "sorry"
-      - type: contains  
-        value: "return"
-      - type: llm-rubric
-        value: "Response should be empathetic and provide clear next steps"
+      - type: javascript
+        value: JSON.parse(output).mark === 10
+      - type: javascript
+        value: JSON.parse(output).mistakes.length === 0
+      - type: latency
+        threshold: 2000
   
   - vars:
-      inquiry: "How long does shipping usually take?"
+      language: "French"
+      question: "Translate 'I am a student'"
+      student_answer: "Je suis un étudiant"
+      expected_answer: "Je suis étudiant"
     assert:
-      - type: contains
-        value: "shipping"
-      - type: llm-rubric
-        value: "Response should provide specific timeframes"
+      - type: javascript
+        value: |
+          const result = JSON.parse(output);
+          result.mark >= 8 && result.mark <= 9
+      - type: contains-any
+        value: ["article", "un"]
 `;
 
         const configPath = path.join(workspaceFolder.uri.fsPath, 'promptfooconfig.yaml');
@@ -68,30 +80,60 @@ tests:
         }
 
         const additionalTests = `
-  # Angry customer scenario
+  # Perfect grammar - different language
   - vars:
-      inquiry: "This is the THIRD TIME I'm contacting you! My order never arrived!"
+      language: "German"
+      question: "Say 'The book is on the table'"
+      student_answer: "Das Buch ist auf dem Tisch"
+      expected_answer: "Das Buch ist auf dem Tisch"
     assert:
-      - type: contains
-        value: "apologize"
-      - type: llm-rubric
-        value: "Response should acknowledge frustration and escalate appropriately"
+      - type: javascript
+        value: JSON.parse(output).mark === 10
+      - type: javascript
+        value: JSON.parse(output).mistakes.length === 0
   
-  # Technical question
+  # Common verb conjugation mistake
   - vars:
-      inquiry: "What API endpoints do you support for order tracking?"
+      language: "Spanish"
+      question: "Conjugate 'hablar' (to speak) - I speak"
+      student_answer: "Yo hablar"
+      expected_answer: "Yo hablo"
     assert:
-      - type: llm-rubric
-        value: "Response should either provide technical details or redirect to appropriate resources"
-  
-  # Refund request
-  - vars:
-      inquiry: "I want a full refund. The product doesn't match the description."
-    assert:
+      - type: javascript
+        value: |
+          const mark = JSON.parse(output).mark;
+          mark >= 3 && mark <= 6
       - type: contains-any
-        value: ["refund", "return", "money back"]
-      - type: llm-rubric
-        value: "Response should explain the refund process clearly"
+        value: ["conjugation", "ending", "infinitive"]
+  
+  # Vocabulary mistake
+  - vars:
+      language: "French"
+      question: "Say 'I like cats'"
+      student_answer: "J'aime les chiens"
+      expected_answer: "J'aime les chats"
+    assert:
+      - type: javascript
+        value: |
+          const mark = JSON.parse(output).mark;
+          mark >= 2 && mark <= 5
+      - type: contains-any
+        value: ["vocabulary", "word", "chiens", "dogs"]
+  
+  # Complex sentence with multiple errors
+  - vars:
+      language: "Spanish"
+      question: "Say 'The red cars are very fast'"
+      student_answer: "El coche rojo son muy rapido"
+      expected_answer: "Los coches rojos son muy rápidos"
+    assert:
+      - type: javascript
+        value: |
+          const result = JSON.parse(output);
+          result.mark >= 4 && result.mark <= 7 &&
+          result.mistakes.length >= 2
+      - type: contains-any
+        value: ["plural", "agreement", "accent"]
 `;
 
         const editor = vscode.window.activeTextEditor!;
@@ -131,13 +173,14 @@ tests:
             fs.mkdirSync(githubDir, { recursive: true });
         }
 
-        const actionContent = `name: LLM Evaluation
+        const actionContent = `name: Language Learning AI Evaluation
 
 on:
   pull_request:
     paths:
       - 'prompts/**'
       - 'promptfooconfig.yaml'
+      - 'src/llms.ts'
   push:
     branches: [main]
 
@@ -155,10 +198,10 @@ jobs:
       - name: Install Promptfoo
         run: npm install -g promptfoo
       
-      - name: Run LLM Evaluation
+      - name: Run Language Learning Evaluation
         env:
           OPENAI_API_KEY: \${{ secrets.OPENAI_API_KEY }}
-          ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: \${{ secrets.GOOGLE_API_KEY }}
         run: |
           promptfoo eval --output results.json
           promptfoo eval --assertions # Fail if assertions don't pass
@@ -177,13 +220,13 @@ jobs:
             const fs = require('fs');
             const results = JSON.parse(fs.readFileSync('results.json', 'utf8'));
             
-            let comment = '## 🤖 LLM Evaluation Results\\n\\n';
-            comment += '| Model | Pass Rate | Avg Latency |\\n';
-            comment += '|-------|-----------|-------------|\\n';
+            let comment = '## 🎓 Language Learning AI Evaluation Results\\n\\n';
+            comment += '| Model | Pass Rate | Avg Latency | Grading Accuracy |\\n';
+            comment += '|-------|-----------|-------------|------------------|\\n';
             
             // Add result summary
             for (const provider of results.providers) {
-              comment += \`| \${provider.name} | \${provider.passRate}% | \${provider.avgLatency}ms |\\n\`;
+              comment += \`| \${provider.name} | \${provider.passRate}% | \${provider.avgLatency}ms | \${provider.accuracy || 'N/A'} |\\n\`;
             }
             
             github.rest.issues.createComment({
@@ -200,7 +243,7 @@ jobs:
         const doc = await vscode.workspace.openTextDocument(actionPath);
         await vscode.window.showTextDocument(doc);
         
-        vscode.window.showInformationMessage('Created GitHub Action for LLM evaluation!');
+        vscode.window.showInformationMessage('Created GitHub Action for Language Learning AI evaluation!');
     });
 
     context.subscriptions.push(createConfig, addScenarios, showCost, createAction);
@@ -286,20 +329,20 @@ function getCostAnalysisHtml(): string {
             </thead>
             <tbody>
                 <tr>
-                    <td>GPT-4</td>
-                    <td>9.2/10</td>
-                    <td>2.1s</td>
-                    <td>$0.03</td>
-                    <td>$0.28</td>
-                    <td>96%</td>
+                    <td>GPT-4o-mini</td>
+                    <td>9.1/10</td>
+                    <td>1.2s</td>
+                    <td>$0.00015</td>
+                    <td>$0.08</td>
+                    <td>94%</td>
                 </tr>
                 <tr>
-                    <td>Claude 3 Opus</td>
-                    <td>9.0/10</td>
-                    <td>1.8s</td>
-                    <td>$0.015</td>
-                    <td>$0.14</td>
-                    <td>92%</td>
+                    <td>Gemini Pro</td>
+                    <td>8.8/10</td>
+                    <td>1.5s</td>
+                    <td>$0.00025</td>
+                    <td>$0.12</td>
+                    <td>91%</td>
                 </tr>
                 <tr>
                     <td>GPT-3.5 Turbo</td>
@@ -314,9 +357,9 @@ function getCostAnalysisHtml(): string {
 
         <h3>💡 Recommendations</h3>
         <ul>
-            <li><strong>Best Quality:</strong> GPT-4 - Use for customer-facing responses</li>
-            <li><strong>Best Value:</strong> Claude 3 Opus - Good balance of quality and cost</li>
-            <li><strong>Best Speed:</strong> GPT-3.5 Turbo - Use for internal tools or drafts</li>
+            <li><strong>Best Grading Accuracy:</strong> GPT-4o-mini - Excellent for precise language assessment</li>
+            <li><strong>Best Feedback Quality:</strong> Gemini Pro - Provides comprehensive, encouraging feedback</li>
+            <li><strong>Best Speed:</strong> GPT-3.5 Turbo - Use for quick practice sessions</li>
         </ul>
     </div>
 </body>

@@ -1,36 +1,132 @@
-# 📝 Understanding the Config File
+# 📝 Creating Your First Language Learning Evaluation
 
-Your `promptfooconfig.yaml` has three main sections:
+Let's create a Promptfoo configuration to test our language learning AI models!
 
-## 1. Providers
+## 🎯 Understanding the Config Structure
+
+A Promptfoo config has three main parts:
+
+### 1. **Providers** - The AI models you're testing
 ```yaml
 providers:
-  - openai:gpt-4
-  - anthropic:claude-3-opus
+  - openai:gpt-4o-mini      # For grading accuracy
+  - google:gemini-pro       # For feedback quality
+  - openai:gpt-3.5-turbo    # Cost-effective baseline
 ```
-These are the LLMs you're comparing.
 
-## 2. Prompts
+### 2. **Prompts** - The instructions for your AI
 ```yaml
 prompts:
   - |
-    You are a helpful assistant.
-    User: {{question}}
+    Grade this {{language}} answer on a scale of 1-10.
+    Student's answer: {{answer}}
+    Correct answer: {{correct_answer}}
+    
+    Return JSON with 'mark' and 'mistakes' array.
 ```
-Your prompt template with variables in `{{brackets}}`.
 
-## 3. Tests
+### 3. **Tests** - Real scenarios with expected outcomes
 ```yaml
 tests:
   - vars:
-      question: "What's the weather?"
+      language: "French"
+      answer: "Je suis un étudiant"
+      correct_answer: "Je suis étudiant"
     assert:
-      - type: contains
-        value: "weather"
+      - type: javascript
+        value: output.mark >= 8 && output.mark <= 10
 ```
-Test cases with expected outputs.
 
-## 🎯 Your Task
-The config file has been created with a customer service scenario. Take a moment to read through it and understand each section.
+## 🌍 Language Learning Example
 
-**Tip:** You can modify the prompt or add your own test cases!
+Here's a complete config for testing language grading:
+
+```yaml
+# Language Learning AI Evaluation
+description: "Test AI models for grading language exercises"
+
+providers:
+  - openai:gpt-4o-mini
+  - google:gemini-pro
+  - openai:gpt-3.5-turbo
+
+prompts:
+  - |
+    You are a language teacher grading a student's answer.
+    
+    Language: {{language}}
+    Question: {{question}}
+    Student's answer: {{student_answer}}
+    Expected answer: {{expected_answer}}
+    
+    Grade from 1-10 and identify specific mistakes.
+    Return JSON: {"mark": number, "mistakes": [string]}
+
+tests:
+  # Perfect answer
+  - vars:
+      language: "Spanish"
+      question: "How do you say 'Good morning'?"
+      student_answer: "Buenos días"
+      expected_answer: "Buenos días"
+    assert:
+      - type: javascript
+        value: JSON.parse(output).mark === 10
+      - type: javascript
+        value: JSON.parse(output).mistakes.length === 0
+  
+  # Minor mistake
+  - vars:
+      language: "Spanish"
+      question: "How do you say 'Good morning'?"
+      student_answer: "Buenas días"
+      expected_answer: "Buenos días"
+    assert:
+      - type: javascript
+        value: |
+          const result = JSON.parse(output);
+          result.mark >= 7 && result.mark <= 9
+      - type: contains
+        value: "gender"
+```
+
+## 💡 Testing Feedback Quality
+
+Now let's add a test for feedback generation:
+
+```yaml
+prompts:
+  - |
+    Based on this grading, provide encouraging feedback:
+    
+    Language: {{language}}
+    Grade: {{grade}}/10
+    Mistakes: {{mistakes}}
+    
+    Give constructive feedback in 2-3 sentences.
+
+tests:
+  - vars:
+      language: "French"
+      grade: 7
+      mistakes: '["verb conjugation", "accent marks"]'
+    assert:
+      - type: llm-rubric
+        value: "Feedback is encouraging and mentions specific areas for improvement"
+      - type: contains-any
+        value: ["conjugation", "verb", "accent"]
+      - type: javascript
+        value: output.length > 50 && output.length < 300
+```
+
+## 🎯 Task: Create Your Config
+
+1. Click the button below to create a config file
+2. It will include tests for both grading and feedback
+3. Run the evaluation to see results!
+
+This config will help you:
+- ✅ Test grading accuracy across models
+- ✅ Ensure feedback is helpful and constructive
+- ✅ Compare response times and costs
+- ✅ Find the best model for your language learning app

@@ -1,28 +1,52 @@
-# 🎯 Welcome to Promptfoo Tutorial!
+# 🚀 Welcome to Language Learning AI Evaluation!
 
-## Why Evaluate LLMs?
+In this tutorial, you'll learn how to evaluate and optimize AI models for language learning applications using **Promptfoo**. 
 
-Different LLMs excel at different tasks:
-- **GPT-4**: Best for complex reasoning
-- **Claude**: Great for detailed analysis
-- **Gemini**: Strong multimodal capabilities
-- **Llama**: Open source and customizable
+## 🎯 What is Promptfoo?
 
-But which is best for **YOUR** specific use case? That's where Promptfoo comes in!
+Promptfoo is a powerful testing framework that helps you:
+- **Compare** different AI models side-by-side
+- **Test** prompts with real-world scenarios
+- **Measure** quality with automated assertions
+- **Optimize** for accuracy, speed, and cost
 
-## What You'll Build
+## 🌍 Our Language Learning Demo App
 
-By the end of this tutorial, you'll have:
-- ✅ A complete test suite for your LLM use case
-- ✅ Side-by-side comparisons of multiple models
-- ✅ Automated quality checks
-- ✅ Cost analysis to optimize your budget
-- ✅ CI/CD integration for continuous testing
+This tutorial is based on a real language learning application that uses AI to:
 
-## Prerequisites
+### 📝 Text-Based Practice
+- **Grade** student answers using GPT-4o-mini
+- **Provide feedback** using Google's Gemini
+- **Identify mistakes** in grammar and vocabulary
+- **Track progress** from 1-10 scoring
 
-- Node.js 14+ installed
-- API keys for the LLMs you want to test
-- Basic familiarity with YAML
+### 🖼️ Image-Based Learning
+- **Analyze** uploaded images with Gemini Vision
+- **Evaluate** student descriptions in target language
+- **Suggest vocabulary** based on visual context
+- **Provide contextual feedback**
 
-Ready? Let's dive in! 🚀
+## 💡 Why Evaluate AI Models?
+
+When building language learning apps, you need to ensure:
+- ✅ **Accurate grading** - Students get fair assessments
+- ✅ **Helpful feedback** - Constructive and encouraging
+- ✅ **Consistent quality** - Reliable across different scenarios
+- ✅ **Safe content** - Appropriate for all learners
+
+## 🎯 What You'll Learn
+
+By the end of this tutorial, you'll know how to:
+
+1. **Set up Promptfoo** for language learning evaluation
+2. **Compare GPT-4 vs Gemini** for educational tasks
+3. **Write test cases** for grading and feedback
+4. **Add quality assertions** to ensure accuracy
+5. **Optimize costs** while maintaining quality
+6. **Integrate testing** into your development workflow
+
+## 🚀 Let's Get Started!
+
+Ready to make your language learning app better? Let's begin by installing Promptfoo and setting up your first evaluation.
+
+**Pro tip:** This tutorial uses real examples from our demo app, so you'll see exactly how to apply these techniques to your own projects!

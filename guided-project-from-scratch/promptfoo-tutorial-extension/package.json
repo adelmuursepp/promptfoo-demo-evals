@@ -1,7 +1,7 @@
 {
-  "name": "promptfoo-tutorial",
-  "displayName": "Promptfoo LLM Evaluation Tutorial",
-  "description": "Learn to evaluate and compare LLMs with Promptfoo CLI",
+  "name": "promptfoo-language-learning",
+  "displayName": "Language Learning AI Evaluation Tutorial",
+  "description": "Learn to evaluate AI models for language learning apps with Promptfoo",
   "version": "1.0.0",
   "repository": {
     "type": "git",
@@ -19,13 +19,13 @@
     "walkthroughs": [
       {
         "id": "promptfoo-basics",
-        "title": "🚀 Promptfoo: LLM Evaluation Basics",
-        "description": "Learn how to evaluate and compare different LLMs using Promptfoo CLI",
+        "title": "🚀 Language Learning AI: Evaluation Guide",
+        "description": "Learn how to evaluate AI models for language learning applications using Promptfoo",
         "steps": [
           {
             "id": "welcome",
             "title": "Welcome to Promptfoo!",
-            "description": "Learn how to scientifically evaluate LLMs for your use case.\n\n**What you'll learn:**\n- Compare multiple LLMs side-by-side\n- Write test cases for your prompts\n- Measure quality with assertions\n- Find the best model for YOUR needs\n\n[Open Tutorial Workspace](command:vscode.openFolder?%5B%22tutorial-workspace%22%5D)",
+            "description": "Learn how to evaluate AI models for language learning applications.\n\n**What you'll learn:**\n- Test language grading accuracy\n- Evaluate feedback quality\n- Compare GPT-4 vs Gemini performance\n- Optimize for educational outcomes\n\n[Open Tutorial Workspace](command:vscode.openFolder?%5B%22tutorial-workspace%22%5D)",
             "media": {
               "markdown": "media/welcome.md"
             },
@@ -50,7 +50,7 @@
           {
             "id": "run-evaluation",
             "title": "Run Your First Evaluation",
-            "description": "Time to see Promptfoo in action! We'll evaluate GPT-4 and Claude on our customer service prompt.\n\n[$(terminal) Run Evaluation](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)\n\n**What to look for:**\n- ✅ Which model sounds more natural?\n- ⏱️ Response times\n- 📊 Side-by-side comparison",
+            "description": "Time to see Promptfoo in action! We'll evaluate GPT-4 and Gemini on language learning tasks.\n\n[$(terminal) Run Evaluation](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)\n\n**What to look for:**\n- ✅ Grading accuracy\n- 📝 Feedback quality\n- ⏱️ Response times\n- 📊 Side-by-side comparison",
             "media": {
               "markdown": "media/run-eval.md"
             }
@@ -58,7 +58,7 @@
           {
             "id": "add-assertions",
             "title": "Add Quality Checks",
-            "description": "Let's add assertions to automatically check response quality.\n\n[$(file) Open Config](command:vscode.open?%5B%22promptfooconfig.yaml%22%5D)\n\nAdd these assertions to ensure:\n- Response mentions return policy\n- Tone is polite\n- No hallucinations\n\n[$(terminal) Run with Assertions](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)",
+            "description": "Let's add assertions to automatically check response quality.\n\n[$(file) Open Config](command:vscode.open?%5B%22promptfooconfig.yaml%22%5D)\n\nAdd these assertions to ensure:\n- Grades are within 1-10 range\n- Feedback is constructive\n- Mistakes are properly identified\n- Response is encouraging\n\n[$(terminal) Run with Assertions](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)",
             "media": {
               "markdown": "media/assertions.md"
             }
@@ -74,7 +74,7 @@
           {
             "id": "multiple-scenarios",
             "title": "Test Multiple Scenarios",
-            "description": "Real-world testing requires multiple test cases. Let's expand our evaluation.\n\n[$(file-add) Add Test Scenarios](command:promptfoo.addTestScenarios)\n\nWe'll test:\n- Angry customers\n- Technical questions  \n- Refund requests\n- Edge cases\n\n[$(terminal) Run Full Test Suite](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)",
+            "description": "Real-world testing requires multiple test cases. Let's expand our evaluation.\n\n[$(file-add) Add Test Scenarios](command:promptfoo.addTestScenarios)\n\nWe'll test:\n- Perfect answers\n- Common mistakes\n- Grammar errors\n- Vocabulary usage\n- Edge cases\n\n[$(terminal) Run Full Test Suite](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20eval%5Cu000D%22%7D)",
             "media": {
               "markdown": "media/scenarios.md"
             }
@@ -82,7 +82,7 @@
           {
             "id": "cost-optimization",
             "title": "Optimize for Cost vs Quality",
-            "description": "Let's add smaller models and compare cost-effectiveness.\n\nWe'll test:\n- GPT-4 (high quality, high cost)\n- GPT-3.5 (balanced)\n- Claude Instant (fast, affordable)\n\n[$(graph) View Cost Analysis](command:promptfoo.showCostAnalysis)",
+            "description": "Let's compare different models for language learning tasks.\n\nWe'll test:\n- GPT-4o-mini (grading accuracy)\n- Gemini Pro (feedback quality)\n- GPT-3.5 (cost-effective option)\n\n[$(graph) View Cost Analysis](command:promptfoo.showCostAnalysis)",
             "media": {
               "markdown": "media/cost.md"
             }

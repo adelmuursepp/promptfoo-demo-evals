@@ -1,0 +1,48 @@
+{
+  "name": "Language Learning AI Demo",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true,
+      "username": "automatic",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-json"
+      ],
+      "settings": {
+        "typescript.preferences.quoteStyle": "double",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/install-extension.sh",
+  
+  "forwardPorts": [3000, 15500],
+  "portsAttributes": {
+    "3000": {
+      "label": "Language Learning App",
+      "onAutoForward": "notify"
+    },
+    "15500": {
+      "label": "Promptfoo Dashboard",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "remoteUser": "node"
+}

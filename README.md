@@ -1,6 +1,6 @@
-# 🚀 Language Learning AI Evaluation Tutorial
+# 🚀 AI Evaluation Tutorial
 
-Learn how to evaluate and optimize AI models for language learning applications using **Promptfoo**!
+Learn how to evaluate and optimize AI models for language learning applications using [**Promptfoo**](https://www.promptfoo.dev/)!
 
 ## 🎯 What is Promptfoo?
 
@@ -45,8 +45,7 @@ When building language learning apps, you need to ensure:
 
 1. **Clone and install:**
    ```bash
-   git clone <your-repo>
-   cd promptfoo-demo
+   cd multilingo-language-app
    npm install
    ```
 
@@ -60,7 +59,6 @@ When building language learning apps, you need to ensure:
    ```bash
    OPENAI_API_KEY=your_openai_key_here
    GOOGLE_API_KEY=your_gemini_key_here
-   PORT=3000
    ```
 
 4. **Run the demo app:**

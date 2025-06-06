@@ -168,7 +168,7 @@ prompts:
       }
 ```
 
-*Here, we define two distinct prompts, each with an `id` for easier reference in tests.*
+*Here, we define two distinct prompts, each with a `label` for easier reference in tests.*
 
 ### 3\. Tests & Assertions: How to Validate LLM Output?
 
@@ -238,7 +238,7 @@ You can assign different `weight` to assertions to reflect their importance. The
 
 ## 📈 Scenario 1: Optimizing for Cost Efficiency and Feedback Quality
 
-As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 1.5 Flash** for generating student feedback. While fast, we need to assess if a potentially more expensive but powerful model like **Gemini 1.5 Pro** provides *significantly* better feedback quality to justify its cost, or if Flash is good enough. We also need to ensure the feedback always maintains a consistent JSON structure.
+As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 2.0 Flash** for generating student feedback. While that is great, we wish to also consider other models. We also need to ensure the feedback always maintains a consistent JSON structure.
 
 Let's set up the providers in `promptfooconfig.json-latency.yaml` for this.
 

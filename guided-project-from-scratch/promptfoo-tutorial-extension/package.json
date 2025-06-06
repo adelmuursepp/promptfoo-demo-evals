@@ -1,16 +1,18 @@
 {
   "name": "promptfoo-language-learning",
-  "displayName": "Language Learning AI Evaluation Tutorial",
-  "description": "Learn to evaluate AI models for language learning apps with Promptfoo",
+  "displayName": "Promtpfoo LLM Evaluation Tutorial",
+  "description": "Learn to evaluate AI models for apps with Promptfoo",
   "version": "1.0.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/promptfoo/promptfoo-tutorial"
+    "url": "https://github.com/adelmuursepp/promptfoo-demo-simple-evals"
   },
   "engines": {
     "vscode": "^1.74.0"
   },
-  "categories": ["Education"],
+  "categories": [
+    "Education"
+  ],
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -25,16 +27,15 @@
           {
             "id": "welcome",
             "title": "Welcome to Promptfoo!",
-            "description": "Learn how to evaluate AI models for language learning applications.\n\n**What you'll learn:**\n- Test language grading accuracy\n- Evaluate feedback quality\n- Compare GPT-4 vs Gemini performance\n- Optimize for educational outcomes\n\n[Open Tutorial Workspace](command:vscode.openFolder?%5B%22tutorial-workspace%22%5D)",
+            "description": "Learn how to evaluate AI models for language learning applications.\n\n**What you'll learn:**\n- Test language grading accuracy\n- Evaluate feedback quality\n- Compare GPT-4 vs Gemini performance\n- Optimize for educational outcomes\n\n",
             "media": {
               "markdown": "media/welcome.md"
-            },
-            "completionEvents": ["onCommand:vscode.openFolder"]
+            }
           },
           {
             "id": "install-cli",
             "title": "Install Promptfoo CLI",
-            "description": "First, let's install the Promptfoo command-line tool.\n\n**Click below to run the install command:**\n\n[$(terminal) Install Promptfoo](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22npm%20install%20-g%20promptfoo%5Cu000D%22%7D)\n\nWait for installation to complete, then verify:\n\n[$(terminal) Check Version](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20--version%5Cu000D%22%7D)",
+            "description": "First, let's install the Promptfoo command-line tool.\n\n**Click below to run the install command:**\n\n[$(terminal) Install Promptfoo with npm install -g promptfoo](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22npm%20install%20-g%20promptfoo%5Cu000D%22%7D)\n\nWait for installation to complete, then verify:\n\n[$(terminal) Check Versio with `promptfoo --version`](command:workbench.action.terminal.sendSequence?%7B%22text%22%3A%22promptfoo%20--version%5Cu000D%22%7D)",
             "media": {
               "markdown": "media/install.md"
             }
@@ -112,7 +113,7 @@
         "title": "Create Basic Promptfoo Config"
       },
       {
-        "command": "promptfoo.addTestScenarios", 
+        "command": "promptfoo.addTestScenarios",
         "title": "Add Test Scenarios"
       },
       {

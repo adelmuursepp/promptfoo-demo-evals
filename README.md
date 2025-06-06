@@ -31,7 +31,7 @@ This tutorial is based on a sample language learning application that uses AI fo
   - **Suggests relevant vocabulary** based on the visual context.
   - **Provides contextual feedback** relating to both the image and the student's description.
 
-You can preview the [sample app here](https://www.google.com/search?q=https://multilingo-app-production.up.railway.app/), in case you have issues running the application locally.
+You can preview the [sample app here](https://multilingo-app-production.up.railway.app/), in case you have issues running the application locally.
 
 ## Detailed Explanation of the Flow of the App:
 User Interaction: The process begins with the User submitting either a text answer to a question or an image and its description within the Language Learning App (Frontend).

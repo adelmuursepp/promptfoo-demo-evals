@@ -20,17 +20,17 @@ prompts:
       You are a friendly language tutor.
       ## User
       Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
+      This is the student answer: {{answer}}
       If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
       The feedback should be concise and direct.
       
       Grading:
       {
-        'mark': {{mark}},
-        'mistakes': {{mistakes}}
+        'mark': <mark>,
+        'mistakes': <mistakes>
       }
-      
-      Return JSON with a single key 'feedback_message' containing the message.
-      Feedback:
+      Respond in the above JSON format.
+    
 
 tests:
   # Test Case 1: Perfect Answer - Expect perfect mark and no mistakes

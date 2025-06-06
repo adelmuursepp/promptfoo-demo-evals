@@ -6,6 +6,7 @@ providers:
     config:
       generationConfig:
         responseMimeType: "application/json"
+  - id: google:gemini-2.0-flash # Our current feedback model. Wrong configuration
   - id: google:gemini-2.0-flash-lite  
     config:
       generationConfig:
@@ -29,6 +30,7 @@ prompts:
       }
       
       Return  JSON with a single key 'feedback_message' containing the message. 
+      
 tests:
 
   # Test Case 1: Feedback for a French answer with a minor mistake - Check quality and latency

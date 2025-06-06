@@ -16,17 +16,21 @@ prompts:
   # This prompt is designed to grade student answers
   - label: grading-prompt
     raw: |
-      Grade the following answer in {{language}} on a scale of 1 to 10.
-      Provide the grade as an integer under the key "mark" and list the mistakes under the key "mistakes".
+      ## System
+      You are a friendly language tutor.
+      ## User
+      Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
+      If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
+      The feedback should be concise and direct.
       
-      Answer:
-      "{{answer}}"
-      
-      Response format (JSON):
+      Grading:
       {
-        "mark": integer,
-        "mistakes": ["mistake1", "mistake2", ...]
+        'mark': {{mark}},
+        'mistakes': {{mistakes}}
       }
+      
+      Return JSON with a single key 'feedback_message' containing the message.
+      Feedback:
 
 tests:
   # Test Case 1: Perfect Answer - Expect perfect mark and no mistakes

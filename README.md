@@ -20,7 +20,7 @@ This tutorial is based on a sample language learning application that uses AI fo
 ### 📝 Text-Based Practice
 
   - **Grades** student answers using OpenAI's GPT-4o-mini, providing an objective score.
-  - **Provides constructive feedback** using Google's Gemini 1.5 Flash.
+  - **Provides constructive feedback** using Google's Gemini Flash.
   - **Identifies mistakes** in grammar and vocabulary.
   - **Tracks progress** with a transparent 1-10 scoring system.
 

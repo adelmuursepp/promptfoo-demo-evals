@@ -10,5 +10,5 @@ code --install-extension promptfoo-tutorial-1.0.0.vsix
 # Go back to root
 cd ../..
 
-echo "✅ Extension installed! Use Ctrl+Shift+P and search 'Language Learning' to start."
+echo "✅ Extension installed! Use Ctrl+Shift+P and search 'walkthrough' to start."
 echo "Or run: code --command 'workbench.action.openWalkthrough' to see all walkthroughs."

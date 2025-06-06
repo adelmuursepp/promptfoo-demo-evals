@@ -1,14 +1,14 @@
 # promptfooconfig.yaml
-description: "Comparing Gemini 1.5 Flash and Pro for feedback generation cost and quality."
+description: "Comparing Gemini 2.0 Flash and Flash Lite for latency and quality"
 
 providers:
   - id: google:gemini-2.0-flash # Our current feedback model (generally cheaper)
-  - id: google:gemini-2.0-pro-exp-02-05   # A more powerful alternative (generally more expensive)
+  - id: google:gemini-2.0-flash-lite  # A more powerful alternative (generally more expensive)
 
 prompts:
   # Prompt for generating student feedback
-  - id: feedback-prompt
-    prompt: |
+  - label: feedback-prompt
+    raw: |
       ## System
       You are a friendly language tutor.
       ## User
@@ -59,9 +59,3 @@ tests:
       - type: contains-all # ASSERTION: Ensure all identified mistakes are mentioned
         value: ["conjugation", "vocabulary", "sentence structure"]
         metric: "Content Accuracy"
-      - type: javascript # ASSERTION: Ensure the feedback is not excessively long
-        value: JSON.parse(output).feedback_message.length < 300
-        metric: "Conciseness"
-      - type: cost
-        threshold: 0.00005 # Again, Pro will likely fail this cost assertion
-        metric: "Cost"

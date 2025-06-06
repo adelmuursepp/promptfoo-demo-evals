@@ -240,138 +240,35 @@ You can assign different `weight` to assertions to reflect their importance. The
 
 As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 1.5 Flash** for generating student feedback. While fast, we need to assess if a potentially more expensive but powerful model like **Gemini 1.5 Pro** provides *significantly* better feedback quality to justify its cost, or if Flash is good enough. We also need to ensure the feedback always maintains a consistent JSON structure.
 
-Let's set up the `promptfooconfig.yaml` for this.
+Let's set up the providers in `promptfooconfig.json-latency.yaml` for this.
 
 ```yaml
 # promptfooconfig.yaml
-description: "Comparing Gemini 1.5 Flash and Pro for feedback generation cost and quality."
+description: "Comparing Gemini 2.0 Flash and Flash Lite"
 
 providers:
-  - id: google:gemini-1.5-flash # Our current feedback model (generally cheaper)
-  - id: google:gemini-1.5-pro   # A more powerful alternative (generally more expensive)
-
-prompts:
-  # Prompt for generating student feedback
-  - id: feedback-prompt
-    prompt: |
-      ## System
-      You are a friendly language tutor.
-      ## User
-      Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
-      If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
-      The feedback should be concise and direct.
-      
-      Grading:
-      {
-        'mark': {{mark}},
-        'mistakes': {{mistakes}}
-      }
-      
-      Return JSON with a single key 'feedback_message' containing the message.
-      Feedback:
-
-tests:
-  # Test Case 1: Perfect Score Feedback - Check for JSON, content, and cost
-  - description: 'Feedback for perfect Spanish answer (mark 10)'
-    vars:
-      language: "Spanish"
-      mark: 10
-      mistakes: "[]"
-      prompt: feedback-prompt # Explicitly use the feedback prompt
-    assert:
-      - type: is-json # ASSERTION: Ensure the output is valid JSON
-        metric: "Format"
-      - type: json-property # ASSERTION: Check for the 'feedback_message' key
-        path: "feedback_message"
-        metric: "Format"
-      - type: contains # ASSERTION: Verify specific success message
-        value: "great work"
-        metric: "Content Accuracy"
-      - type: cost # ASSERTION: Monitor the cost of this particular evaluation
-        threshold: 0.00005 # Example threshold in USD for Flash, Pro will likely exceed this
-        metric: "Cost"
-
-  # Test Case 2: Feedback for a French answer with a minor mistake - Check quality and latency
-  - description: 'Feedback for French answer (mark 7, gender mistake)'
-    vars:
-      language: "French"
-      mark: 7
-      mistakes: "['gender agreement']"
-      prompt: feedback-prompt
-    assert:
-      - type: is-json
-        metric: "Format"
-      - type: json-property
-        path: "feedback_message"
-        metric: "Format"
-      - type: llm-rubric # ASSERTION: Use another LLM to grade the feedback quality
-        value: "Feedback is constructive, addresses the 'gender agreement' mistake, and is encouraging."
-        provider: openai:gpt-4o # Using GPT-4o as a robust grader for subjective quality
-        metric: "Feedback Quality"
-        weight: 2 # Give more weight to qualitative feedback
-      - type: latency # ASSERTION: Ensure the response is fast
-        threshold: 1500 # Max 1.5 seconds
-        metric: "Performance"
-
-  # Test Case 3: Feedback for a low score with multiple mistakes - Check conciseness and relevant terms
-  - description: 'Feedback for German answer (mark 3, multiple mistakes)'
-    vars:
-      language: "German"
-      mark: 3
-      mistakes: "['verb conjugation', 'vocabulary', 'sentence structure']"
-      prompt: feedback-prompt
-    assert:
-      - type: is-json
-        metric: "Format"
-      - type: json-property
-        path: "feedback_message"
-        metric: "Format"
-      - type: contains-all # ASSERTION: Ensure all identified mistakes are mentioned
-        value: ["conjugation", "vocabulary", "sentence structure"]
-        metric: "Content Accuracy"
-      - type: javascript # ASSERTION: Ensure the feedback is not excessively long
-        value: JSON.parse(output).feedback_message.length < 300
-        metric: "Conciseness"
-      - type: cost
-        threshold: 0.00005 # Again, Pro will likely fail this cost assertion
-        metric: "Cost"
-
-  # Test Case 4: Edge Case - Empty mistakes array for a non-perfect score (should still give general feedback)
-  - description: 'Feedback for Spanish answer (mark 8, no explicit mistakes provided)'
-    vars:
-      language: "Spanish"
-      mark: 8
-      mistakes: "[]"
-      prompt: feedback-prompt
-    assert:
-      - type: is-json
-      - type: json-property
-        path: "feedback_message"
-      - type: not-contains # Should not say "great work"
-        value: "great work"
-      - type: llm-rubric
-        value: "Feedback provides general constructive advice appropriate for an 8/10 score."
-        provider: openai:gpt-4o
+  - id: google:gemini-2.0-flash # Our current feedback model 
+  - id: google:gemini-2.0-flash-lite
 ```
 
 ### Running and Analyzing Scenario 1
 
 1.  **Save your `promptfooconfig.yaml`**. Make sure it contains all the sections outlined above.
-2.  **Run the evaluation** from your `guided-project-from-scratch` directory:
+2.  **Run the evaluation**:
     ```bash
     promptfoo eval
     ```
-    Promptfoo will send each prompt/test case combination to both `google:gemini-1.5-flash` and `google:gemini-1.5-pro`.
+    Promptfoo will send each prompt/test case combination to both `google:gemini-2.0-flash` and `google:gemini-2.0-flash-lite`.
 3.  **View the results** in your browser:
     ```bash
     promptfoo view
     ```
     Navigate to `http://localhost:15500`. In the web UI, you can:
-      * See side-by-side comparisons of `gemini-1.5-flash` and `gemini-1.5-pro` outputs for each test case.
-      * Observe which assertions passed or failed for each model, paying close attention to the **`Format` (JSON), `Cost`, `Feedback Quality`, `Performance`, `Content Accuracy`,** and **`Conciseness`** metrics.
-      * Compare the **cost** and **latency** of the two models for the same outputs, alongside their qualitative feedback assessed by `llm-rubric`.
+      * See side-by-side comparisons and outputs for each test case.
+      * Observe which assertions passed or failed for each model.
+      * Compare the assertions for two models for the same outputs, alongside their qualitative feedback assessed by `llm-rubric`.
 
-**Conclusion for Scenario 1:** By analyzing these results, we can make a data-driven decision. If `gemini-1.5-flash` consistently passes all quality assertions (e.g., `llm-rubric` scores are high) while significantly outperforming `gemini-1.5-pro` on the `cost` assertion, it might remain our preferred choice for feedback to save money. Conversely, if `gemini-1.5-pro` provides a noticeable leap in `Feedback Quality` that justifies its higher cost for our premium users, we might consider using it strategically. The `is-json` assertion ensures our application can reliably parse the output.
+**Conclusion for Scenario 1:** By analyzing these results, we can make a data-driven decision. Depending on the assertions we can choose the best model for our use case.
 
 -----
 
@@ -385,7 +282,7 @@ This scenario will demonstrate how to test different **hyperparameter** settings
 
 We'll define `openai:gpt-4o-mini` twice, each with a different `temperature` setting. This allows Promptfoo to run the same tests against the same model but with different internal behaviors. 
 
-Have a look at the test file in `promptfoo-tests/promptfooconfig.hyperparameters.yaml`
+Have a look at the test file in `promptfooconfig.hyperparameters.yaml`
 
 ### Running and Analyzing Scenario 2
 

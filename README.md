@@ -1,495 +1,444 @@
-# 🚀 AI Evaluation Tutorial
+# 🚀 Evaluations for LLMs: A Promptfoo Tutorial
 
-Learn how to evaluate and optimize AI models for language learning applications using [**Promptfoo**](https://www.promptfoo.dev/)!
-
-## 🎯 What is Promptfoo?
-
-Promptfoo is a powerful testing framework that helps you:
-- **Compare** different AI models side-by-side
-- **Test** prompts with real-world scenarios
-- **Measure** quality with automated assertions
-- **Optimize** for accuracy, speed, and cost
-
-## 🌍 Our Language Learning Demo App
-
-This tutorial is based on a real language learning application that uses AI to:
-
-### 📝 Text-Based Practice
-- **Grade** student answers using GPT-4o-mini
-- **Provide feedback** using Google's Gemini
-- **Identify mistakes** in grammar and vocabulary
-- **Track progress** from 1-10 scoring
-
-### 🖼️ Image-Based Learning
-- **Analyze** uploaded images with Gemini Vision
-- **Evaluate** student descriptions in target language
-- **Suggest vocabulary** based on visual context
-- **Provide contextual feedback**
+This tutorial covers evaluating and optimizing AI models for LLM applications using [**Promptfoo**](https://www.promptfoo.dev/). As a hypothetical startup building cutting-edge educational tools, ensuring the quality, efficiency, and reliability of our AI features is paramount. Promptfoo helps us achieve just that by providing a robust, open-source testing framework for LLMs.
 
 ## 💡 Why Evaluate AI Models?
 
-When building language learning apps, you need to ensure:
-- ✅ **Accurate grading** - Students get fair assessments
-- ✅ **Helpful feedback** - Constructive and encouraging
-- ✅ **Consistent quality** - Reliable across different scenarios
-- ✅ **Safe content** - Appropriate for all learners
+In any application leveraging LLMs, thorough evaluation is non-negotiable. Whether you're building chatbots, content generators, data analyzers, or, like us, language learning platforms, here's why evaluating your AI models is critical:
 
-## 🚀 Getting Started
+  - **Quality Assurance:** Ensures the AI consistently delivers accurate, relevant, and helpful outputs. Without evaluation, models can drift, provide inconsistent results, or fail in unexpected scenarios.
+  - **Performance Optimization:** Identifies bottlenecks in speed (latency) and resource consumption (cost), allowing you to deliver a snappy user experience while managing operational expenses.
+  - **Risk Mitigation:** Helps uncover and prevent issues like biased outputs, harmful content generation, data leakage, and prompt injection vulnerabilities, protecting your users and your brand.
+  - **Model & Prompt Comparison:** Provides a systematic way to compare different LLM providers (e.g., OpenAI, Google, Anthropic), various models from the same provider (e.g., Gemini 1.5 Flash vs. Gemini 1.5 Pro), and different prompt engineering strategies. This enables data-driven decisions on which AI components to use.
+  - **Rapid Iteration & Development:** Automates the testing cycle for LLM interactions, replacing slow, manual testing. This allows developers to iterate on prompts and models quickly, accelerating the development process.
+  - **Reproducibility & Explainability:** Creates a clear, testable history of how your LLMs perform under various conditions, aiding in debugging and understanding model behavior.
+
+## 🌍 Our Language Learning Demo App
+
+This tutorial is based on a sample language learning application that uses AI for teaching languages:
+
+### 📝 Text-Based Practice
+
+  - **Grades** student answers using OpenAI's GPT-4o-mini, providing an objective score.
+  - **Provides constructive feedback** using Google's Gemini 1.5 Flash.
+  - **Identifies mistakes** in grammar and vocabulary.
+  - **Tracks progress** with a transparent 1-10 scoring system.
+
+### 🖼️ Image-Based Learning
+
+  - **Analyzes** uploaded images with Google's Gemini 1.5 Flash (Vision capabilities).
+  - **Evaluates** student descriptions of images in the target language.
+  - **Suggests relevant vocabulary** based on the visual context.
+  - **Provides contextual feedback** relating to both the image and the student's description.
+
+You can preview the [sample app here](https://www.google.com/search?q=https://multilingo-app-production.up.railway.app/), in case you have issues running the application locally.
+
+## Detailed Explanation of the Flow of the App:
+User Interaction: The process begins with the User submitting either a text answer to a question or an image and its description within the Language Learning App (Frontend).
+
+### Frontend to Backend:
+
+For text answers, the Frontend sends an HTTP POST request to the `/api/chat` endpoint on the Backend API, including the language and the answer.
+For image answers, the Frontend sends an HTTP POST request to the `/api/analyze-image` endpoint, including the language, the description, and the imageBase64 data.
+
+### Backend Processing (Text Answer Flow):
+
+1. Grading: The Backend first calls the gradeAnswer function, which leverages GPT-4o-mini. This LLM processes the user's answer and returns a mark (1-10) and a list of mistakes in JSON format.
+2. Feedback Generation: Next, the Backend calls the generateFeedback function, powered by Gemini 1.5 Flash. It uses the mark and mistakes from the previous step to craft a feedback_message string.
+3. Feedback Moderation (Guardrails): Immediately after generating feedback, the Backend calls the moderateFeedback function, which again uses GPT-4o-mini. This LLM acts as a guardrail, checking the generated feedback_message for any inappropriate content and returning a boolean status (isClean). If the feedback is flagged, it won't be sent to the user.
+
+### Backend Processing (Image Answer Flow):
+
+Image Analysis & Evaluation: 
+
+The Backend directly calls the analyzeImageForLanguageLearning function. This single function utilizes Gemini 1.5 Flash Vision capabilities to perform a comprehensive analysis. It takes the image and description, and in a single LLM interaction, returns a JSON object containing the imageAnalysis, a mark, feedback on the description, and vocabulary suggestions related to the image.
+
+### Backend to Frontend & User Display:
+
+For text answers, if the feedback is clean, the Backend consolidates the mark and feedback_message and sends them back to the Frontend.
+For image answers, the Backend sends the complete imageAnalysisResult (containing analysis, mark, feedback, and vocabulary) to the Frontend.
+Finally, the Frontend displays the processed grades, feedback, and analysis directly to the User.
+
+
+## 🚀 Getting Started with Promptfoo
 
 ### Prerequisites
-- Node.js 18+ installed
-- OpenAI API key
-- Google Gemini API key
+
+  - [Node.js](https://nodejs.org/en/download/) 18+ installed
+  - An OpenAI API key
+  - A Google Gemini API key
 
 ### Installation
 
-1. **Clone and install:**
-   ```bash
-   cd multilingo-language-app
-   npm install
-   ```
+1.  **Clone the project and install dependencies:**
 
-2. **Install Promptfoo:**
-   ```bash
-   npm install -g promptfoo
-   ```
+    ```bash
+    cd multilingo-language-app
+    npm install
+    ```
 
-3. **Set up environment variables:**
-   Create a `.env` file in the `guided-project-from-scratch` folder:
-   ```bash
-   OPENAI_API_KEY=your_openai_key_here
-   GOOGLE_API_KEY=your_gemini_key_here
-   ```
+2.  **Install Promptfoo globally (recommended for command-line access):**
 
-4. **Run the demo app:**
-   ```bash
-   cd guided-project-from-scratch
-   npm run build
-   npm run serve
-   ```
+    ```bash
+    npm install -g promptfoo
+    ```
 
-## 📝 Tutorial: Creating Your First Language Learning Evaluation
+3.  **Set up environment variables:**
+    Create a `.env` file in the `guided-project-from-scratch` folder to securely store your API keys:
 
-### Step 1: Understanding the Config Structure
+    ```bash
+    OPENAI_API_KEY=your_openai_key_here
+    GOOGLE_API_KEY=your_gemini_key_here
+    ```
 
-A Promptfoo config has three main parts:
+    *Ensure these keys are valid and have access to the respective models (e.g., `gpt-4o-mini`, `gemini-pro`).*
 
-#### 1. **Providers** - The AI models you're testing
+4. **Check that Promptfoo works**
+
+  In the terminal run:
+  ```bash
+  promptfoo init
+  ```
+
+5.  **Run the demo app (optional, to see it in action):**
+
+    ```bash
+    npm run start
+    ```
+
+    The application will typically be accessible at `http://localhost:3000`.
+
+-----
+
+## 📝 Promptfoo Configuration: The `promptfooconfig.yaml` File
+
+Promptfoo evaluations are defined in a YAML file, typically named `promptfooconfig.yaml`. This file acts as your blueprint, specifying which **LLM providers** to test, the **prompts** to use, and the **test cases** and **assertions** that validate the LLM's output.
+
+### 1\. Providers: Which LLMs to Test?
+
+The `providers` section specifies the LLM APIs you want to evaluate. You can include multiple providers to compare their performance for a given task. Each provider is identified by a unique `id`.
+
 ```yaml
 providers:
-  - openai:gpt-4o-mini      # For grading accuracy
-  - google:gemini-pro       # For feedback quality
-  - openai:gpt-3.5-turbo    # Cost-effective baseline
+  - id: google:gemini-1.5-flash # Our current feedback model
+  - id: google:gemini-1.5-pro   # A more powerful, but more expensive alternative
+  - id: openai:gpt-4o-mini      # Our grading model
 ```
 
-#### 2. **Prompts** - The instructions for your AI
+*Promptfoo supports a wide range of providers, including OpenAI, Google, Anthropic, Azure OpenAI, Replicate, Hugging Face, and even local or custom API integrations.*
+
+### 2\. Prompts: What Instructions to Give the LLM?
+
+The `prompts` section contains the actual instructions (or prompt templates) that you send to the LLMs. They can include placeholders (`{{variable}}`) that are dynamically filled by your test cases, allowing you to test how different prompt wordings affect the LLM's output.
+
 ```yaml
 prompts:
-  - |
-    Grade this {{language}} answer on a scale of 1-10.
-    Student's answer: {{answer}}
-    Correct answer: {{correct_answer}}
-    
-    Return JSON with 'mark' and 'mistakes' array.
+  # Prompt for generating student feedback
+  - id: feedback-prompt
+    prompt: |
+      ## System
+      You are a friendly language tutor.
+      ## User
+      Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
+      If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
+      The feedback should be concise and direct.
+      
+      Grading:
+      {
+        'mark': {{mark}},
+        'mistakes': {{mistakes}}
+      }
+      
+      Return JSON with a single key 'feedback_message' containing the message.
+      Feedback:
+
+  # Prompt for grading student answers
+  - id: grading-prompt
+    prompt: |
+      Grade the following answer in {{language}} on a scale of 1 to 10.
+      Provide the grade as an integer under the key "mark" and list the mistakes under the key "mistakes".
+      
+      Answer:
+      "{{answer}}"
+      
+      Response format (JSON):
+      {
+        "mark": integer,
+        "mistakes": ["mistake1", "mistake2", ...]
+      }
 ```
 
-#### 3. **Tests** - Real scenarios with expected outcomes
+*Here, we define two distinct prompts, each with an `id` for easier reference in tests.*
+
+### 3\. Tests & Assertions: How to Validate LLM Output?
+
+The `tests` section is where you define individual test cases. Each `test` specifies the input variables (`vars`) for your prompt and the expected outcomes (`assert`) for the LLM's response. Assertions are the core of automated evaluation, allowing you to automatically check the quality of the outputs.
+
+-----
+
+### **Assertions & Metrics: Your Evaluation Toolkit**
+
+Assertions are used to compare the LLM output against expected values or conditions. While assertions are not required to run an eval, they are a useful way to automate your analysis and quantify "Accuracy," which in Promptfoo, is defined as the proportion of prompts that produce the expected or desired output.
+
+To use assertions in your test cases, add an `assert` property to the test case with an array of assertion objects. Each assertion object should have a `type` property indicating the assertion type and any additional properties required for that assertion type.
+
+**Common Assertion Properties:**
+
+![assertion propperties](assets/assertions-types.png)
+
+You can also **negate** some tests type by prepending `not-` (e.g., `not-equals`, `not-regex`).
+
+For more details on assertions, see [Promptfoo assertions documentation](https://www.promptfoo.dev/docs/configuration/expected-outputs/)
+
+**Grouping Assertions via Assertion Sets (`assert-set`):**
+Assertions can be grouped together using an `assert-set` type. All assertions within an `assert-set` must pass for the set to pass by default. You can also define a `threshold` for an `assert-set` (e.g., `threshold: 0.5` means 50% of assertions within the set must pass).
+
 ```yaml
+# Example of an assert-set
 tests:
-  - vars:
+  - description: 'Test that the output is cheap and fast'
+    vars:
+      example: 'Hello, World!'
+    assert:
+      - type: assert-set
+        assert:
+          - type: cost
+            threshold: 0.001
+          - type: latency
+            threshold: 200
+```
+
+**Deterministic Evaluation Metrics:**
+These are programmatic tests run directly on the LLM output. They're fast and reliable for objective checks.
+
+  - `equals`: Output matches exactly.
+  - `contains`: Output contains a substring.
+  - `is-json`: Output is valid JSON (can include schema validation).
+  - `cost`: Cost is below a threshold.
+  - `latency`: Latency is below a threshold (milliseconds).
+  - `javascript` / `python`: Provided custom function validates the output.
+  - `regex`, `starts-with`, `contains-any`, `contains-all`, and their case-insensitive counterparts.
+  - `is-valid-function-call`, `guardrails`, etc. (many more available).
+
+**Model-Assisted Evaluation Metrics:**
+These metrics rely on LLMs or other machine learning models to grade the output, ideal for subjective qualities.
+
+  - `llm-rubric`: An LLM grades output based on a given qualitative rubric.
+  - `model-graded-closedqa`: An LLM evaluates if the output adheres to specific criteria (often yes/no).
+  - `answer-relevance`: Checks if LLM output is related to the original query.
+  - `select-best`: Compares multiple outputs for a test case and picks the best.
+  - `similar`, `classifier`, `g-eval`, `context-faithfulness`, `context-recall`, `context-relevance`, `factuality`, `pi`.
+
+  For more in detail overview of Model-Assisted Evaluation Metrics see [Promptfoo documenation](https://www.promptfoo.dev/docs/configuration/expected-outputs/model-graded/)
+
+**Weighted Assertions & Scoring Requirements:**
+You can assign different `weight` to assertions to reflect their importance. The final test score is a weighted average of assertion scores. A `threshold` property can also be set at the test case level, meaning the test only passes if the combined weighted score of its assertions exceeds this threshold.
+
+-----
+
+## 📈 Scenario 1: Optimizing for Cost Efficiency and Feedback Quality
+
+As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 1.5 Flash** for generating student feedback. While fast, we need to assess if a potentially more expensive but powerful model like **Gemini 1.5 Pro** provides *significantly* better feedback quality to justify its cost, or if Flash is good enough. We also need to ensure the feedback always maintains a consistent JSON structure.
+
+Let's set up the `promptfooconfig.yaml` for this.
+
+```yaml
+# promptfooconfig.yaml
+description: "Comparing Gemini 1.5 Flash and Pro for feedback generation cost and quality."
+
+providers:
+  - id: google:gemini-1.5-flash # Our current feedback model (generally cheaper)
+  - id: google:gemini-1.5-pro   # A more powerful alternative (generally more expensive)
+
+prompts:
+  # Prompt for generating student feedback
+  - id: feedback-prompt
+    prompt: |
+      ## System
+      You are a friendly language tutor.
+      ## User
+      Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
+      If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
+      The feedback should be concise and direct.
+      
+      Grading:
+      {
+        'mark': {{mark}},
+        'mistakes': {{mistakes}}
+      }
+      
+      Return JSON with a single key 'feedback_message' containing the message.
+      Feedback:
+
+tests:
+  # Test Case 1: Perfect Score Feedback - Check for JSON, content, and cost
+  - description: 'Feedback for perfect Spanish answer (mark 10)'
+    vars:
+      language: "Spanish"
+      mark: 10
+      mistakes: "[]"
+      prompt: feedback-prompt # Explicitly use the feedback prompt
+    assert:
+      - type: is-json # ASSERTION: Ensure the output is valid JSON
+        metric: "Format"
+      - type: json-property # ASSERTION: Check for the 'feedback_message' key
+        path: "feedback_message"
+        metric: "Format"
+      - type: contains # ASSERTION: Verify specific success message
+        value: "great work"
+        metric: "Content Accuracy"
+      - type: cost # ASSERTION: Monitor the cost of this particular evaluation
+        threshold: 0.00005 # Example threshold in USD for Flash, Pro will likely exceed this
+        metric: "Cost"
+
+  # Test Case 2: Feedback for a French answer with a minor mistake - Check quality and latency
+  - description: 'Feedback for French answer (mark 7, gender mistake)'
+    vars:
       language: "French"
-      answer: "Je suis un étudiant"
-      correct_answer: "Je suis étudiant"
+      mark: 7
+      mistakes: "['gender agreement']"
+      prompt: feedback-prompt
     assert:
-      - type: javascript
-        value: output.mark >= 8 && output.mark <= 10
-```
+      - type: is-json
+        metric: "Format"
+      - type: json-property
+        path: "feedback_message"
+        metric: "Format"
+      - type: llm-rubric # ASSERTION: Use another LLM to grade the feedback quality
+        value: "Feedback is constructive, addresses the 'gender agreement' mistake, and is encouraging."
+        provider: openai:gpt-4o # Using GPT-4o as a robust grader for subjective quality
+        metric: "Feedback Quality"
+        weight: 2 # Give more weight to qualitative feedback
+      - type: latency # ASSERTION: Ensure the response is fast
+        threshold: 1500 # Max 1.5 seconds
+        metric: "Performance"
 
-### Step 2: Complete Language Learning Example
-
-Create a `promptfooconfig.yaml` file:
-
-```yaml
-# Language Learning AI Evaluation
-description: "Test AI models for grading language exercises"
-
-providers:
-  - openai:gpt-4o-mini
-  - google:gemini-pro
-  - openai:gpt-3.5-turbo
-
-prompts:
-  - |
-    You are a language teacher grading a student's answer.
-    
-    Language: {{language}}
-    Question: {{question}}
-    Student's answer: {{student_answer}}
-    Expected answer: {{expected_answer}}
-    
-    Grade from 1-10 and identify specific mistakes.
-    Return JSON: {"mark": number, "mistakes": [string]}
-
-tests:
-  # Perfect answer
-  - vars:
-      language: "Spanish"
-      question: "How do you say 'Good morning'?"
-      student_answer: "Buenos días"
-      expected_answer: "Buenos días"
+  # Test Case 3: Feedback for a low score with multiple mistakes - Check conciseness and relevant terms
+  - description: 'Feedback for German answer (mark 3, multiple mistakes)'
+    vars:
+      language: "German"
+      mark: 3
+      mistakes: "['verb conjugation', 'vocabulary', 'sentence structure']"
+      prompt: feedback-prompt
     assert:
-      - type: javascript
-        value: JSON.parse(output).mark === 10
-      - type: javascript
-        value: JSON.parse(output).mistakes.length === 0
-  
-  # Minor mistake
-  - vars:
-      language: "Spanish"
-      question: "How do you say 'Good morning'?"
-      student_answer: "Buenas días"
-      expected_answer: "Buenos días"
-    assert:
-      - type: javascript
-        value: |
-          const result = JSON.parse(output);
-          result.mark >= 7 && result.mark <= 9
-      - type: contains
-        value: "gender"
-```
+      - type: is-json
+        metric: "Format"
+      - type: json-property
+        path: "feedback_message"
+        metric: "Format"
+      - type: contains-all # ASSERTION: Ensure all identified mistakes are mentioned
+        value: ["conjugation", "vocabulary", "sentence structure"]
+        metric: "Content Accuracy"
+      - type: javascript # ASSERTION: Ensure the feedback is not excessively long
+        value: JSON.parse(output).feedback_message.length < 300
+        metric: "Conciseness"
+      - type: cost
+        threshold: 0.00005 # Again, Pro will likely fail this cost assertion
+        metric: "Cost"
 
-### Step 3: Run Your First Evaluation
-
-```bash
-promptfoo eval
-```
-
-### Step 4: View Results in Browser
-
-```bash
-promptfoo view
-```
-
-Navigate to `http://localhost:15500` to see the interactive dashboard.
-
-## 🎯 Essential Language Learning Quality Assertions
-
-### 1. **Grade Range Validation**
-```yaml
-assert:
-  - type: javascript
-    value: |
-      const grade = JSON.parse(output).mark;
-      grade >= 1 && grade <= 10
-```
-
-### 2. **Mistake Identification**
-```yaml
-assert:
-  - type: javascript
-    value: |
-      const result = JSON.parse(output);
-      result.mark < 10 ? result.mistakes.length > 0 : true
-```
-
-### 3. **Feedback Tone**
-```yaml
-assert:
-  - type: llm-rubric
-    value: "Feedback should be encouraging, constructive, and appropriate for language learners"
-  - type: not-contains-any
-    value: ["stupid", "terrible", "awful", "give up"]
-```
-
-### 4. **Language-Specific Checks**
-```yaml
-# For Spanish gender agreement
-assert:
-  - type: contains-any
-    value: ["gender", "masculine", "feminine"]
-
-# For French accents
-assert:
-  - type: contains-any
-    value: ["accent", "é", "è", "à"]
-```
-
-### 5. **Performance Metrics**
-```yaml
-assert:
-  - type: latency
-    threshold: 2000  # 2 seconds max
-  - type: cost
-    threshold: 0.01  # $0.01 per evaluation
-```
-
-## 🤖 Model-Graded Quality Evaluation
-
-### Using AI to Grade AI
-
-For subjective quality measures, use other AI models to evaluate responses:
-
-```yaml
-assert:
-  - type: llm-rubric
-    value: gives output like a language tutor with feedback on how to improve concisely
-    provider: openai:gpt-4o  # Uses GPT-4o to grade responses
-```
-
-### Advanced Example with Variables
-
-```yaml
-prompts:
-  - |
-    Grade this {{language}} answer and provide feedback.
-    Student answer: {{student_answer}}
-    Expected: {{expected_answer}}
-
-defaultTest:
-  assert:
-    - type: llm-rubric
-      value: "Accurately grades the {{language}} answer without being overly harsh or lenient."
-
-tests:
-  - vars:
-      language: "Spanish"
-      student_answer: "Hola como estas"
-      expected_answer: "Hola, ¿cómo estás?"
-  - vars:
-      language: "French"
-      student_answer: "Bonjour ca va"
-      expected_answer: "Bonjour, ça va ?"
-```
-
-### Comparing Feedback Approaches
-
-```yaml
-prompts:
-  - "Provide brief feedback on this {{language}} answer: {{student_answer}}"
-  - "Give detailed, encouraging feedback on this {{language}} answer: {{student_answer}}"
-
-tests:
-  - vars:
-      language: "Spanish"
-      student_answer: "Me llamo es Juan"
-    assert:
-      - type: select-best
-        value: "Choose the feedback that is most helpful for a language learner"
-```
-
-## 🎛️ Hyperparameter Testing
-
-### Why Test Hyperparameters?
-
-Different tasks need different settings:
-- **Low randomness**: Consistent, predictable grading (good for accuracy)
-- **High randomness**: More varied feedback styles (good for engagement)
-
-### Example Configurations
-
-```yaml
-providers:
-  # For grading - need consistency
-  - id: openai:gpt-4o-mini
-    config:
-      temperature: 0.2  # Predictable grading
-      top_p: 0.9
-  
-  # For feedback - allow creativity
-  - id: openai:gpt-4o-mini
-    config:
-      temperature: 0.7  # More creative feedback
-      top_p: 0.8
-```
-
-### Real-World Use Cases
-
-**Beginner Students:**
-```yaml
-temperature: 0.3, top_p: 0.9  # Consistent, clear feedback
-```
-
-**Advanced Students:**
-```yaml
-temperature: 0.6, top_p: 0.8  # More nuanced, varied feedback
-```
-
-## 📊 Testing Multiple Scenarios
-
-### Complete Example: Spanish Verb Conjugation
-
-```yaml
-tests:
-  - description: "Spanish verb conjugation - present tense"
+  # Test Case 4: Edge Case - Empty mistakes array for a non-perfect score (should still give general feedback)
+  - description: 'Feedback for Spanish answer (mark 8, no explicit mistakes provided)'
     vars:
       language: "Spanish"
-      question: "Conjugate 'hablar' in first person present"
-      student_answer: "yo hablo"
-      expected_answer: "yo hablo"
+      mark: 8
+      mistakes: "[]"
+      prompt: feedback-prompt
     assert:
-      - type: javascript
-        value: JSON.parse(output).mark === 10
-      - type: javascript
-        value: JSON.parse(output).mistakes.length === 0
-      - type: latency
-        threshold: 1500
-
-  - description: "Spanish verb conjugation - common mistake"
-    vars:
-      language: "Spanish"
-      question: "Conjugate 'hablar' in first person present"
-      student_answer: "yo hablar"
-      expected_answer: "yo hablo"
-    assert:
-      - type: javascript
-        value: |
-          const mark = JSON.parse(output).mark;
-          mark >= 3 && mark <= 6
-      - type: contains-any
-        value: ["conjugation", "ending", "infinitive"]
+      - type: is-json
+      - type: json-property
+        path: "feedback_message"
+      - type: not-contains # Should not say "great work"
+        value: "great work"
       - type: llm-rubric
-        value: "Explains the conjugation rule and provides the correct form"
-```
-
-### Image Description Testing
-
-```yaml
-assert:
-  # Vocabulary suggestions present
-  - type: javascript
-    value: |
-      const result = JSON.parse(output);
-      result.vocabulary && result.vocabulary.length >= 3
-  
-  # Feedback relates to image content
-  - type: llm-rubric
-    value: "Feedback references specific objects or scenes from the image"
-  
-  # Grammar check performed
-  - type: contains-any
-    value: ["grammar", "syntax", "structure"]
-```
-
-## 🔄 Continuous Testing
-
-Set up automated testing for different languages and proficiency levels:
-
-```yaml
-tests:
-  - description: "Beginner Spanish grading"
-    vars:
-      language: "Spanish" 
-      level: "beginner"
-    assert:
-      - type: llm-rubric
-        value: "Feedback is encouraging and explains basic grammar concepts clearly"
+        value: "Feedback provides general constructive advice appropriate for an 8/10 score."
         provider: openai:gpt-4o
-  
-  - description: "Advanced French grading"
-    vars:
-      language: "French"
-      level: "advanced" 
-    assert:
-      - type: llm-rubric
-        value: "Feedback addresses subtle grammar and style issues appropriately"
-        provider: google:gemini-pro
 ```
 
-## 🎯 Best Practices
+### Running and Analyzing Scenario 1
 
-1. **Layer your assertions** - Start with basic checks, then add specific ones
-2. **Test edge cases** - Empty answers, very long responses, special characters
-3. **Validate structure first** - Ensure JSON/format is correct before checking content
-4. **Set realistic thresholds** - Balance quality with performance
-5. **Use rubrics for nuance** - Let AI evaluate subjective qualities
+1.  **Save your `promptfooconfig.yaml`**. Make sure it contains all the sections outlined above.
+2.  **Run the evaluation** from your `guided-project-from-scratch` directory:
+    ```bash
+    promptfoo eval
+    ```
+    Promptfoo will send each prompt/test case combination to both `google:gemini-1.5-flash` and `google:gemini-1.5-pro`.
+3.  **View the results** in your browser:
+    ```bash
+    promptfoo view
+    ```
+    Navigate to `http://localhost:15500`. In the web UI, you can:
+      * See side-by-side comparisons of `gemini-1.5-flash` and `gemini-1.5-pro` outputs for each test case.
+      * Observe which assertions passed or failed for each model, paying close attention to the **`Format` (JSON), `Cost`, `Feedback Quality`, `Performance`, `Content Accuracy`,** and **`Conciseness`** metrics.
+      * Compare the **cost** and **latency** of the two models for the same outputs, alongside their qualitative feedback assessed by `llm-rubric`.
 
-## 🚀 Advanced Scenarios
+**Conclusion for Scenario 1:** By analyzing these results, we can make a data-driven decision. If `gemini-1.5-flash` consistently passes all quality assertions (e.g., `llm-rubric` scores are high) while significantly outperforming `gemini-1.5-pro` on the `cost` assertion, it might remain our preferred choice for feedback to save money. Conversely, if `gemini-1.5-pro` provides a noticeable leap in `Feedback Quality` that justifies its higher cost for our premium users, we might consider using it strategically. The `is-json` assertion ensures our application can reliably parse the output.
 
-### Scenario 1: Model Comparison (GPT-4o-mini vs GPT-3.5)
+-----
 
-Test switching from an older model to a newer one:
+## 🎯 Scenario 2: Fine-tuning Grading Consistency with Hyperparameters
 
-```bash
-# Copy the test configuration
-cp tests/feedback-validation.yaml promptfooconfig.yaml
+Our app uses **GPT-4o-mini** for grading student answers. While generally accurate, we need to ensure its consistency, especially for edge cases. We suspect the `temperature` hyperparameter, which controls the randomness of the output, might be influencing variability. A lower `temperature` usually leads to more deterministic outputs, which is ideal for precise grading.
 
-# Run comparison
-promptfoo eval
-promptfoo view
-```
+This scenario will demonstrate how to test different **hyperparameter** settings for a model and how to use robust assertions for grading accuracy and output format.
 
-### Scenario 2: Cost Optimization
+### Step 1: Configure Providers with Varying Hyperparameters
 
-Compare cost vs quality across different models:
+We'll define `openai:gpt-4o-mini` twice, each with a different `temperature` setting. This allows Promptfoo to run the same tests against the same model but with different internal behaviors. 
 
-```yaml
-providers:
-  - openai:gpt-4o-mini    # High accuracy, moderate cost
-  - google:gemini-pro     # Good feedback quality
-  - openai:gpt-3.5-turbo  # Cost-effective baseline
-```
+Have a look at the test file in `promptfoo-tests/promptfooconfig.hyperparameters.yaml`
 
-## 🔗 Integration with CI/CD
+### Running and Analyzing Scenario 2
 
-### GitHub Actions Example
+1.  **Run the evaluation**:
+    ```bash
+    promptfoo eval -c promptfooconfig.hyperparameters.yaml
+    ```
+2.  **View the results**:
+    ```bash
+    promptfoo view
+    ```
+    In the UI, you'll see a comparison between "GPT-4o-mini (T=0.2)" and "GPT-4o-mini (T=0.7)". Focus on the `Mark Accuracy`, `Mistakes Identification`, and `Security/Robustness` metrics.
+      * Observe if the **lower `temperature`** model (`T=0.2`) consistently provides more accurate and predictable grades, especially for edge cases and the prompt injection attempt.
+      * Look for deviations in the `T=0.7` model, which might show more variance or succumb to the injection attempt.
 
-Create `.github/workflows/llm-evaluation.yml`:
+**Conclusion for Scenario 2:** This evaluation will help us test the different model hyperparameters for our use cases. We also verify the crucial `is-json` output format for reliable application integration.
 
-```yaml
-name: Language Learning AI Evaluation
+-----
 
-on:
-  pull_request:
-    paths:
-      - 'prompts/**'
-      - 'promptfooconfig.yaml'
-      - 'src/llms.ts'
-  push:
-    branches: [main]
+## 🔄 Continuous Testing with CI/CD
 
-jobs:
-  evaluate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Install Promptfoo
-        run: npm install -g promptfoo
-      
-      - name: Run Language Learning Evaluation
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-        run: |
-          promptfoo eval --output results.json
-          promptfoo eval --assertions
-```
+To ensure that our AI quality remains high as we develop and deploy new features, we integrate Promptfoo into our Continuous Integration/Continuous Delivery (CI/CD) pipeline. This means every time we push code changes, Promptfoo automatically runs our evaluations, acting as a critical safeguard against regressions.
+
+
+-----
+
+## 💰 Business Impact: How Promptfoo Transformed Our Language Learning Startup
+
+Implementing Promptfoo in our language learning app development enables us to:
+
+1.  **Optimize AI Spending:** Through rigorous cost-efficiency evaluations (like Scenario 1), we can now make informed decisions on when to use more expensive, powerful models versus more economical alternatives. 
+2.  **Accelerated Development Cycles:** Automated testing for LLM interactions meant our developers spent less time on manual, repetitive checks and more time innovating. 
+3.  **Data-Driven Decision Making:** Promptfoo replaced anecdotal evidence with quantifiable metrics for AI performance. This allowed our product managers and engineers to make informed decisions about model selection, prompt design, and feature rollouts, reducing guesswork and risk in a rapidly evolving AI landscape.
+
+
+In essence, Promptfoo sets up a structured framework to make data-driven decisions for which LLMs to use for our use cases and allows to iterate faster.
+
+-----
 
 ## 📚 What You've Learned
 
-By following this tutorial, you now know how to:
+By following this tutorial, you now have a solid understanding of how to:
 
-1. **Set up Promptfoo** for language learning evaluation
-2. **Compare GPT-4 vs Gemini** for educational tasks
-3. **Write test cases** for grading and feedback
-4. **Add quality assertions** to ensure accuracy
-5. **Optimize costs** while maintaining quality
-6. **Integrate testing** into your development workflow
+1.  **Understand the critical need** for robust AI evaluation in any LLM-powered application.
+2.  **Set up Promptfoo** for systematic evaluation, defining providers, prompts, and tests in `promptfooconfig.yaml`.
+3.  **Implement diverse assertions**, including deterministic checks (like `is-json`, `contains`, `javascript` for specific values/lengths) and powerful model-assisted evaluations (`llm-rubric`) to measure quality.
+4.  **Optimize for cost efficiency** by comparing models with different pricing tiers using the `cost` assertion.
+5.  **Fine-tune model behavior** using **hyperparameter testing** (e.g., `temperature`) to achieve desired output consistency and reliability in tasks like grading.
+6.  **Quantify the business impact** of thorough LLM evaluation, translating technical improvements into tangible business value.
 
 ## 🎉 Next Steps
 
-- Explore advanced LangChain features for your language learning app
-- Study prompt engineering techniques for better educational AI
-- Set up continuous testing in your development workflow
-- Experiment with fine-tuning models for specific languages
-
----
-
-**Ready to make your language learning app better?** Start by creating your first `promptfooconfig.yaml` and running your first evaluation!
-
-For more advanced features, check out the [Promptfoo documentation](https://promptfoo.dev/docs).
+  - **Explore Advanced Promptfoo Features:** Dive deeper into Promptfoo's documentation for features like dataset generation, red teaming, and custom providers.
+  - **Experiment with Different Models:** Continue comparing other LLMs (e.g., Anthropic Claude, custom fine-tuned models) for various tasks in your app.
+  - **Expand Your Test Coverage:** Add more diverse test cases for different languages, student levels, and problem types (e.g., image description, conversation practice).
+  - **Refine Your Prompts:** Use the insights from Promptfoo evaluations to continuously improve the clarity, effectiveness, and safety of your prompts.

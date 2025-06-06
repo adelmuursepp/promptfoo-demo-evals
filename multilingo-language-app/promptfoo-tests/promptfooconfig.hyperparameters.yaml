@@ -1,0 +1,84 @@
+description: "Evaluating GPT-4o-mini temperature for grading consistency."
+
+providers:
+  # Define GPT-4o-mini with a low temperature for more deterministic output
+  - id: openai:gpt-4o-mini
+    label: "GPT-4o-mini (T=0.2)" # Label for clarity in results
+    config:
+      temperature: 0.2
+  # Define GPT-4o-mini with a higher temperature for comparison (more varied output)
+  - id: openai:gpt-4o-mini
+    label: "GPT-4o-mini (T=0.7)" # Label for clarity in results
+    config:
+      temperature: 0.7
+
+prompts:
+  # This prompt is designed to grade student answers
+  - label: grading-prompt
+    raw: |
+      Grade the following answer in {{language}} on a scale of 1 to 10.
+      Provide the grade as an integer under the key "mark" and list the mistakes under the key "mistakes".
+      
+      Answer:
+      "{{answer}}"
+      
+      Response format (JSON):
+      {
+        "mark": integer,
+        "mistakes": ["mistake1", "mistake2", ...]
+      }
+
+tests:
+  # Test Case 1: Perfect Answer - Expect perfect mark and no mistakes
+  - description: "Spanish Grading: Perfect answer for a simple greeting"
+    vars:
+      language: "Spanish"
+      answer: "Buenos días"
+      prompt: grading-prompt
+    assert:
+      - type: is-json # Ensure the output is valid JSON
+        metric: "Format"
+      - type: javascript # Mark must be exactly 10
+        value: JSON.parse(output).mark === 10
+        metric: "Mark Accuracy"
+        weight: 2 # Give this assertion more importance
+      - type: javascript # Mistakes array must be empty
+        value: JSON.parse(output).mistakes.length === 0
+        metric: "Mistakes Accuracy"
+
+  # Test Case 2: Minor Grammatical Mistake (Gender Agreement) - Expect mark in range, and 'gender' mistake
+  - description: "Spanish Grading: Minor gender agreement mistake"
+    vars:
+      language: "Spanish"
+      answer: "Buenas días" # Incorrect gender
+      prompt: grading-prompt
+    assert:
+      - type: is-json
+        metric: "Format"
+      - type: javascript # Mark should be in a specific range for minor error
+        value: |
+          const result = JSON.parse(output);
+          return result.mark >= 7 && result.mark <= 9
+        metric: "Mark Accuracy"
+        weight: 2
+      - type: contains # Ensure 'gender' is mentioned in mistakes
+        value: "gender"
+        metric: "Mistakes Identification"
+
+  # # Test Case 3: Edge Case - Empty Answer
+  # - description: "Grading: Empty student answer"
+  #   vars:
+  #     language: "English"
+  #     answer: ""
+  #     prompt: grading-prompt
+  #   assert:
+  #     - type: is-json
+  #     - type: javascript
+  #       value: JSON.parse(output).mark <= 2 # Very low mark expected for no answer
+  #       metric: "Mark Accuracy"
+  #     - type: contains # Should indicate no answer or "empty"
+  #       value: "empty"
+  #       metric: "Mistakes Identification"
+  #     - type: javascript
+  #       value: JSON.parse(output).mistakes.length > 0
+  #       metric: "Mistakes Identification"

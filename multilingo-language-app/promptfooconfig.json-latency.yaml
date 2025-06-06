@@ -2,18 +2,17 @@
 description: "Comparing Gemini 2.0 Flash and Flash Lite for latency and quality"
 
 providers:
-  - id: google:gemini-2.0-flash # Our current feedback model (generally cheaper)
-  - id: google:gemini-2.0-flash-lite  # A more powerful alternative (generally more expensive)
+  - id: google:gemini-2.0-flash # Our current feedback model 
+    config:
+      responseMimeType: application/json
+  - id: google:gemini-2.0-flash-lite  
 
 prompts:
   # Prompt for generating student feedback
   - label: feedback-prompt
     raw: |
-      ## System
-      You are a friendly language tutor.
-      ## User
       Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
-      If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
+      If the mark is 10, just say the user did a great work. 
       The feedback should be concise and direct.
       
       Grading:
@@ -22,8 +21,8 @@ prompts:
         'mistakes': {{mistakes}}
       }
       
-      Return JSON with a single key 'feedback_message' containing the message.
-      Feedback:
+      Return JSON object with single key 'feedback_message' containing the message. Do not use markdown.
+    
 
 tests:
 

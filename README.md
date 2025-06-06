@@ -95,10 +95,10 @@ Finally, the Frontend displays the processed grades, feedback, and analysis dire
 
 4. **Check that Promptfoo works**
 
-  In the terminal run:
-  ```bash
-  promptfoo init
-  ```
+    In the terminal run:
+    ```bash
+    promptfoo init
+    ```
 
 5.  **Run the demo app (optional, to see it in action):**
 
@@ -120,8 +120,8 @@ The `providers` section specifies the LLM APIs you want to evaluate. You can inc
 
 ```yaml
 providers:
-  - id: google:gemini-1.5-flash # Our current feedback model
-  - id: google:gemini-1.5-pro   # A more powerful, but more expensive alternative
+  - id: google:gemini-2.0-flash # Our current feedback model
+  - id: google:gemini-2.0-flash-lite   
   - id: openai:gpt-4o-mini      # Our grading model
 ```
 
@@ -134,8 +134,8 @@ The `prompts` section contains the actual instructions (or prompt templates) tha
 ```yaml
 prompts:
   # Prompt for generating student feedback
-  - id: feedback-prompt
-    prompt: |
+  - label: feedback-prompt
+    raw: |
       ## System
       You are a friendly language tutor.
       ## User
@@ -153,8 +153,8 @@ prompts:
       Feedback:
 
   # Prompt for grading student answers
-  - id: grading-prompt
-    prompt: |
+  - label: grading-prompt
+    raw: |
       Grade the following answer in {{language}} on a scale of 1 to 10.
       Provide the grade as an integer under the key "mark" and list the mistakes under the key "mistakes".
       

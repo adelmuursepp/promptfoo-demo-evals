@@ -2,11 +2,11 @@
 description: "Comparing Gemini 2.0 Flash and Flash Lite for latency and quality"
 
 providers:
-  - id: google:gemini-2.5-flash # Our current feedback model (generally cheaper)
+  - id: google:gemini-2.5-flash # Our current feedback model 
     config:
       generationConfig:
         responseMimeType: "application/json"
-  - id: google:gemini-2.5-flash-lite # A more powerful alternative (generally more expensive)
+  - id: google:gemini-2.5-flash-lite # More lightweight model
     config:
       generationConfig:
         responseMimeType: "application/json"

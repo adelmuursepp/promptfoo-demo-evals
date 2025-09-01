@@ -20,7 +20,7 @@ This tutorial is based on a sample language learning application that uses AI fo
 ### 📝 Text-Based Practice
 
   - **Grades** student answers using OpenAI's GPT-4o-mini, providing an objective score.
-  - **Provides constructive feedback** using Google's Gemini 1.5 Flash.
+  - **Provides constructive feedback** using Google's Gemini Flash.
   - **Identifies mistakes** in grammar and vocabulary.
   - **Tracks progress** with a transparent 1-10 scoring system.
 
@@ -31,7 +31,7 @@ This tutorial is based on a sample language learning application that uses AI fo
   - **Suggests relevant vocabulary** based on the visual context.
   - **Provides contextual feedback** relating to both the image and the student's description.
 
-You can preview the [sample app here](https://www.google.com/search?q=https://multilingo-app-production.up.railway.app/), in case you have issues running the application locally.
+You can preview the [sample app here](https://multilingo-app-production.up.railway.app/), in case you have issues running the application locally.
 
 ## Detailed Explanation of the Flow of the App:
 User Interaction: The process begins with the User submitting either a text answer to a question or an image and its description within the Language Learning App (Frontend).
@@ -95,10 +95,10 @@ Finally, the Frontend displays the processed grades, feedback, and analysis dire
 
 4. **Check that Promptfoo works**
 
-  In the terminal run:
-  ```bash
-  promptfoo init
-  ```
+    In the terminal run:
+    ```bash
+    promptfoo init
+    ```
 
 5.  **Run the demo app (optional, to see it in action):**
 
@@ -120,8 +120,8 @@ The `providers` section specifies the LLM APIs you want to evaluate. You can inc
 
 ```yaml
 providers:
-  - id: google:gemini-1.5-flash # Our current feedback model
-  - id: google:gemini-1.5-pro   # A more powerful, but more expensive alternative
+  - id: google:gemini-2.0-flash # Our current feedback model
+  - id: google:gemini-2.0-flash-lite   
   - id: openai:gpt-4o-mini      # Our grading model
 ```
 
@@ -134,8 +134,8 @@ The `prompts` section contains the actual instructions (or prompt templates) tha
 ```yaml
 prompts:
   # Prompt for generating student feedback
-  - id: feedback-prompt
-    prompt: |
+  - label: feedback-prompt
+    raw: |
       ## System
       You are a friendly language tutor.
       ## User
@@ -153,8 +153,8 @@ prompts:
       Feedback:
 
   # Prompt for grading student answers
-  - id: grading-prompt
-    prompt: |
+  - label: grading-prompt
+    raw: |
       Grade the following answer in {{language}} on a scale of 1 to 10.
       Provide the grade as an integer under the key "mark" and list the mistakes under the key "mistakes".
       
@@ -168,7 +168,7 @@ prompts:
       }
 ```
 
-*Here, we define two distinct prompts, each with an `id` for easier reference in tests.*
+*Here, we define two distinct prompts, each with a `label` for easier reference in tests.*
 
 ### 3\. Tests & Assertions: How to Validate LLM Output?
 
@@ -238,7 +238,7 @@ You can assign different `weight` to assertions to reflect their importance. The
 
 ## 📈 Scenario 1: Optimizing for Cost Efficiency and Feedback Quality
 
-As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 1.5 Flash** for generating student feedback. While fast, we need to assess if a potentially more expensive but powerful model like **Gemini 1.5 Pro** provides *significantly* better feedback quality to justify its cost, or if Flash is good enough. We also need to ensure the feedback always maintains a consistent JSON structure.
+As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 2.0 Flash** for generating student feedback. While that is great, we wish to also consider other models. We also need to ensure the feedback always maintains a consistent JSON structure.
 
 Let's set up the providers in `promptfooconfig.json-latency.yaml` for this.
 

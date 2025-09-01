@@ -9,7 +9,7 @@ In any application leveraging LLMs, thorough evaluation is non-negotiable. Wheth
   - **Quality Assurance:** Ensures the AI consistently delivers accurate, relevant, and helpful outputs. Without evaluation, models can drift, provide inconsistent results, or fail in unexpected scenarios.
   - **Performance Optimization:** Identifies bottlenecks in speed (latency) and resource consumption (cost), allowing you to deliver a snappy user experience while managing operational expenses.
   - **Risk Mitigation:** Helps uncover and prevent issues like biased outputs, harmful content generation, data leakage, and prompt injection vulnerabilities, protecting your users and your brand.
-  - **Model & Prompt Comparison:** Provides a systematic way to compare different LLM providers (e.g., OpenAI, Google, Anthropic), various models from the same provider (e.g., Gemini 1.5 Flash vs. Gemini 1.5 Pro), and different prompt engineering strategies. This enables data-driven decisions on which AI components to use.
+  - **Model & Prompt Comparison:** Provides a systematic way to compare different LLM providers (e.g., OpenAI, Google, Anthropic), various models from the same provider (e.g., Gemini 2.5 Flash vs. Gemini 2.5 Flash Lite), and different prompt engineering strategies. This enables data-driven decisions on which AI components to use.
   - **Rapid Iteration & Development:** Automates the testing cycle for LLM interactions, replacing slow, manual testing. This allows developers to iterate on prompts and models quickly, accelerating the development process.
   - **Reproducibility & Explainability:** Creates a clear, testable history of how your LLMs perform under various conditions, aiding in debugging and understanding model behavior.
 
@@ -26,7 +26,7 @@ This tutorial is based on a sample language learning application that uses AI fo
 
 ### 🖼️ Image-Based Learning
 
-  - **Analyzes** uploaded images with Google's Gemini 1.5 Flash (Vision capabilities).
+  - **Analyzes** uploaded images with Google's Gemini 2.5 Flash (Vision capabilities).
   - **Evaluates** student descriptions of images in the target language.
   - **Suggests relevant vocabulary** based on the visual context.
   - **Provides contextual feedback** relating to both the image and the student's description.
@@ -44,14 +44,14 @@ For image answers, the Frontend sends an HTTP POST request to the `/api/analyze-
 ### Backend Processing (Text Answer Flow):
 
 1. Grading: The Backend first calls the gradeAnswer function, which leverages GPT-4o-mini. This LLM processes the user's answer and returns a mark (1-10) and a list of mistakes in JSON format.
-2. Feedback Generation: Next, the Backend calls the generateFeedback function, powered by Gemini 1.5 Flash. It uses the mark and mistakes from the previous step to craft a feedback_message string.
+2. Feedback Generation: Next, the Backend calls the generateFeedback function, powered by Gemini 2.5 Flash. It uses the mark and mistakes from the previous step to craft a feedback_message string.
 3. Feedback Moderation (Guardrails): Immediately after generating feedback, the Backend calls the moderateFeedback function, which again uses GPT-4o-mini. This LLM acts as a guardrail, checking the generated feedback_message for any inappropriate content and returning a boolean status (isClean). If the feedback is flagged, it won't be sent to the user.
 
 ### Backend Processing (Image Answer Flow):
 
 Image Analysis & Evaluation: 
 
-The Backend directly calls the analyzeImageForLanguageLearning function. This single function utilizes Gemini 1.5 Flash Vision capabilities to perform a comprehensive analysis. It takes the image and description, and in a single LLM interaction, returns a JSON object containing the imageAnalysis, a mark, feedback on the description, and vocabulary suggestions related to the image.
+The Backend directly calls the analyzeImageForLanguageLearning function. This single function utilizes Gemini 2.5 Flash Vision capabilities to perform a comprehensive analysis. It takes the image and description, and in a single LLM interaction, returns a JSON object containing the imageAnalysis, a mark, feedback on the description, and vocabulary suggestions related to the image.
 
 ### Backend to Frontend & User Display:
 
@@ -91,7 +91,7 @@ Finally, the Frontend displays the processed grades, feedback, and analysis dire
     GOOGLE_API_KEY=your_gemini_key_here
     ```
 
-    *Ensure these keys are valid and have access to the respective models (e.g., `gpt-4o-mini`, `gemini-pro`).*
+    *Ensure these keys are valid and have access to the respective models (e.g., `gpt-4o-mini`, `gemini pro`).*
 
 4. **Check that Promptfoo works**
 
@@ -120,8 +120,8 @@ The `providers` section specifies the LLM APIs you want to evaluate. You can inc
 
 ```yaml
 providers:
-  - id: google:gemini-2.0-flash # Our current feedback model
-  - id: google:gemini-2.0-flash-lite   
+  - id: google:gemini-2.5-flash # Our current feedback model
+  - id: google:gemini-2.5-flash-lite   
   - id: openai:gpt-4o-mini      # Our grading model
 ```
 
@@ -238,17 +238,17 @@ You can assign different `weight` to assertions to reflect their importance. The
 
 ## 📈 Scenario 1: Optimizing for Cost Efficiency and Feedback Quality
 
-As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 2.0 Flash** for generating student feedback. While that is great, we wish to also consider other models. We also need to ensure the feedback always maintains a consistent JSON structure.
+As a startup, managing API costs without sacrificing quality is crucial. Our language learning app currently uses **Google Gemini 2.5 Flash** for generating student feedback. While that is great, we wish to also consider other models. We also need to ensure the feedback always maintains a consistent JSON structure.
 
 Let's set up the providers in `promptfooconfig.json-latency.yaml` for this.
 
 ```yaml
 # promptfooconfig.yaml
-description: "Comparing Gemini 2.0 Flash and Flash Lite"
+description: "Comparing Gemini 2.5 Flash and Flash Lite"
 
 providers:
-  - id: google:gemini-2.0-flash # Our current feedback model 
-  - id: google:gemini-2.0-flash-lite
+  - id: google:gemini-2.5-flash # Our current feedback model 
+  - id: google:gemini-2.5-flash-lite
 ```
 
 ### Running and Analyzing Scenario 1
@@ -258,7 +258,7 @@ providers:
     ```bash
     promptfoo eval
     ```
-    Promptfoo will send each prompt/test case combination to both `google:gemini-2.0-flash` and `google:gemini-2.0-flash-lite`.
+    Promptfoo will send each prompt/test case combination to both `google:gemini-2.5-flash` and `google:gemini-2.5-flash-lite`.
 3.  **View the results** in your browser:
     ```bash
     promptfoo view

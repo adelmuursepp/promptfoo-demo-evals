@@ -6,11 +6,15 @@ providers:
     label: "GPT-4o-mini (T=0.2)" # Label for clarity in results
     config:
       temperature: 0.2
+      response_format:
+        type: json_object
   # Define GPT-4o-mini with a higher temperature for comparison (more varied output)
   - id: openai:gpt-4o-mini
     label: "GPT-4o-mini (T=0.7)" # Label for clarity in results
     config:
       temperature: 0.7
+      response_format:
+        type: json_object
 
 prompts:
   # This prompt is designed to grade student answers

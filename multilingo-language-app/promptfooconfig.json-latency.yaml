@@ -2,8 +2,14 @@
 description: "Comparing Gemini 2.0 Flash and Flash Lite for latency and quality"
 
 providers:
-  - id: google:gemini-2.0-flash # Our current feedback model (generally cheaper)
-  - id: google:gemini-2.0-flash-lite  # A more powerful alternative (generally more expensive)
+  - id: google:gemini-2.5-flash # Our current feedback model (generally cheaper)
+    config:
+      generationConfig:
+        responseMimeType: "application/json"
+  - id: google:gemini-2.5-flash-lite # A more powerful alternative (generally more expensive)
+    config:
+      generationConfig:
+        responseMimeType: "application/json"
 
 prompts:
   # Prompt for generating student feedback
@@ -15,20 +21,19 @@ prompts:
       Based on the following grading in {{language}}, provide constructive feedback to the student in English so they can improve in learning the language.
       If the mark is 10, just say the user did a great work. Do not use markdown for the feedback message.
       The feedback should be concise and direct.
-      
+
       Grading:
       {
         'mark': {{mark}},
         'mistakes': {{mistakes}}
       }
-      
-      Return JSON with a single key 'feedback_message' containing the message.
-      Feedback:
+
+      Return ONLY valid JSON with a single key 'feedback_message' containing the message. Do not wrap the JSON in markdown code blocks or add any other text.
+      JSON Response:
 
 tests:
-
   # Test Case 1: Feedback for a French answer with a minor mistake - Check quality and latency
-  - description: 'Feedback for French answer (mark 7, gender mistake)'
+  - description: "Feedback for French answer (mark 7, gender mistake)"
     vars:
       language: "French"
       mark: 7
@@ -47,7 +52,7 @@ tests:
         metric: "Performance"
 
   # Test Case 2: Feedback for a low score with multiple mistakes - Check conciseness and relevant terms
-  - description: 'Feedback for German answer (mark 3, multiple mistakes)'
+  - description: "Feedback for German answer (mark 3, multiple mistakes)"
     vars:
       language: "German"
       mark: 3

@@ -118,7 +118,7 @@ export async function generateFeedback(language: string, grading: GradingRespons
     const prompt = createFeedbackPrompt(language, mark, mistakesString);
 
     // Use Gemini for feedback generation
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent([
       { text: "You are a friendly language tutor.\n\n" + prompt }
     ]);
@@ -187,7 +187,7 @@ export async function analyzeImageForLanguageLearning(
 ): Promise<ImageAnalysisResponse> {
   try {
     // Use Gemini's vision capabilities
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     
     // Remove the data URL prefix if present
     const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
